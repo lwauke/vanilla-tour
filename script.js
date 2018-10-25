@@ -10,6 +10,14 @@ function nextStep (element) {
         : nextStep(sibling)
 }    
 
+function parentStep (element) { 
+    const parent = element.parentElement
+
+    return parent.classList.contains('step') 
+        ? parent
+        : parentStep(parent)
+}    
+
 btnStart.addEventListener('click', e => {
     e.preventDefault()
     const body = document.querySelector('body')
@@ -21,7 +29,7 @@ btnStart.addEventListener('click', e => {
 
 next.forEach(b => b.addEventListener('click', e => {
     e.preventDefault()
-    const parent = e.currentTarget.parentElement
+    const parent = parentStep(e.target)
     const brother = nextStep(parent)
     
     parent.classList.remove('showing')
