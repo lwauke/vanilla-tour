@@ -8,15 +8,7 @@ function nextStep (element) {
     return sibling.classList.contains('step') 
         ? sibling
         : nextStep(sibling)
-}    
-
-function parentStep (element) { 
-    const parent = element.parentElement
-
-    return parent.classList.contains('step') 
-        ? parent
-        : parentStep(parent)
-}    
+}
 
 btnStart.addEventListener('click', e => {
     e.preventDefault()
@@ -29,10 +21,10 @@ btnStart.addEventListener('click', e => {
 
 next.forEach(b => b.addEventListener('click', e => {
     e.preventDefault()
-    const parent = parentStep(e.target)
-    const brother = nextStep(parent)
+    const stepDiv = e.target.parentElement.parentElement
+    const brother = nextStep(stepDiv)
     
-    parent.classList.remove('showing')
+    stepDiv.classList.remove('showing')
     brother.classList.add('showing')
 }))
 
