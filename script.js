@@ -23,9 +23,11 @@ next.forEach(b => b.addEventListener('click', e => {
     e.preventDefault()
     const stepDiv = e.target.parentElement.parentElement
     const brother = nextStep(stepDiv)
+    const yPosition = brother.getBoundingClientRect().y - 300
     
     stepDiv.classList.remove('showing')
     brother.classList.add('showing')
+    window.scroll(0, yPosition)
 }))
 
 finish.addEventListener('click', e => {
