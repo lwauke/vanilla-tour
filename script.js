@@ -1,40 +1,62 @@
 const btnStart = document.querySelector('#start')
-const next = document.querySelectorAll('.next')
-const finish = document.querySelector('.finish')
+, next = document.querySelectorAll('.next')
+, previous = document.querySelectorAll('.previous')
+, finishBtn = document.querySelectorAll('.finish')
+, steps = Array.from(document.querySelectorAll('.step'))
+, body = document.querySelector('body')
 
-function nextStep (element) { 
-    const sibling = element.nextElementSibling
+let iterator
 
-    return sibling.classList.contains('step') 
-        ? sibling
-        : nextStep(sibling)
+function Iterator(arr){
+	this.index = -1;
+	this.next = () => {
+        return this.index < arr.length
+            ? {value: arr[++this.index], done: false}
+            : {done: true}
+	};
+	this.previous = () => {
+        return this.index > 0
+            ? {value: arr[--this.index], done: false}
+            : {done: true}
+    };
+    this.actual = () => ({value: arr[this.index], done: false})
+    this.reset = () => { this.index = -1 };
 }
 
-btnStart.addEventListener('click', e => {
-    e.preventDefault()
-    const body = document.querySelector('body')
-    const firstStep = document.querySelector('.step:first-of-type')
+function finish() {
+    iterator.reset()
+    steps.forEach(s => s.classList.remove('showing'))
+    body.classList.remove('ontour')
+}
 
-    body.classList.add('ontour')
-    firstStep.classList.add('showing')
-})
+function toggleStep(active, inactive) {
+    active && active.classList.remove('showing')
+    inactive && inactive.classList.add('showing')
+}
+
+iterator = new Iterator(steps)
+
+function iterateStep(target) {
+    const actualStep = iterator.actual()
+    , targetStep = iterator[target]()
+
+    if (targetStep.done) {
+        finish()
+        return
+    }
+
+    toggleStep(actualStep.value, targetStep.value)
+}
 
 next.forEach(b => b.addEventListener('click', e => {
     e.preventDefault()
-    const stepDiv = e.target.parentElement.parentElement
-    const brother = nextStep(stepDiv)
-    const yPosition = brother.getBoundingClientRect().y - 300
-    
-    stepDiv.classList.remove('showing')
-    brother.classList.add('showing')
-    window.scroll(0, yPosition)
+    body.classList.add('ontour')
+    iterateStep('next')
 }))
 
-finish.addEventListener('click', e => {
-    e.preventDefault()    
-    const body = document.querySelector('body')
-    const steps = document.querySelectorAll('.step')
+previous.forEach(b => b.addEventListener('click', e => {
+    e.preventDefault()
+    iterateStep('previous')
+}))
 
-    steps.forEach(s => s.classList.remove('showing'))
-    body.classList.remove('ontour')
-})
+finishBtn.forEach(b => b.addEventListener('click', finish))
