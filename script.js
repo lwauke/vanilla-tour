@@ -46,6 +46,7 @@ function iterateStep(target) {
     }
 
     toggleStep(actualStep.value, targetStep.value)
+    targetStep.value.scrollIntoView()
 }
 
 next.forEach(b => b.addEventListener('click', e => {
